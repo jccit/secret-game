@@ -5,15 +5,47 @@ import {
   isWebSocketPingEvent,
   WebSocket,
 } from "https://deno.land/std/ws/mod.ts";
+import type Game from '../shared/types/Game.ts';
+import Role from '../shared/types/Role.ts';
+import GameManager from './gameManager.ts';
+
+const gm = new GameManager();
+
+function handleReduxEvent(sock: WebSocket, rawAction: string) {
+  const action = JSON.parse(rawAction);
+
+  if (action.type === 'join') {
+    let game: Game | null = null;
+
+    if (action.payload != '') {
+      game = gm.get(action.payload);
+    } else {
+      game = gm.newGame();
+    }
+
+    if (game) {
+      sock.send(JSON.stringify({
+        type: 'game/joined',
+        payload: game
+      }));
+    } else {
+      sock.send(JSON.stringify({
+        type: 'game/joiningFail',
+      }));
+    }
+  }
+}
 
 async function handleWs(sock: WebSocket) {
   console.log("socket connected!");
+
   try {
     for await (const ev of sock) {
       if (typeof ev === "string") {
         // text message
         console.log("ws:Text", ev);
-        await sock.send(ev);
+
+        handleReduxEvent(sock, ev);
       } else if (ev instanceof Uint8Array) {
         // binary message
         console.log("ws:Binary", ev);

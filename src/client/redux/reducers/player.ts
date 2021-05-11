@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Role } from 'shared/types/Role';
+import Role from 'shared/types/Role';
 import type Player from 'shared/types/Player';
 
 const initialState: Player = {
