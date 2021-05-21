@@ -1,14 +1,14 @@
 import React from 'react';
 import { useAppSelector } from '../redux/hooks';
-import type Player from '../../shared/types/Player';
+import type { PlayerList } from '../../shared/types/Player';
 
 const PlayerList = () => {
-  const players: Player[] = useAppSelector((state) => state.game.players);
+  const players: PlayerList = useAppSelector((state) => state.game.players);
 
   return (
     <ul>
-      { players.map((player, i) => {
-        return <li key={i}>{ player.name }</li>
+      { Object.keys(players).map((id, i) => {
+        return <li key={i}>{ players[id].name }</li>
       }) }
     </ul>
   )

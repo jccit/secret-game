@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type Game from 'shared/types/Player';
+import type GameState from 'shared/types/GameState';
+import type Player from 'src/shared/types/Player';
 
-const initialState: Game = {
+const initialState: GameState = {
   id: '',
   players: [],
   joinState: "inactive"
@@ -11,18 +12,23 @@ export const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    joined: (state: Game, action: PayloadAction<Game>) => {
+    joined: (state: GameState, action: PayloadAction<GameState>) => {
       return {
         ...state,
         ...action.payload,
         joinState: "joined"
       };
     },
-    joiningFail: (state: Game) => {
+    joiningFail: (state: GameState) => {
       state.joinState = "failed";
     },
-    playerJoined: (state: Game, action: PayloadAction<string>) => {
-      state.players.push({ name: action.payload });
+    playerJoined: (state: GameState, action: PayloadAction<{ id: string, player: Player }>) => {
+      state.players[action.payload.id] = action.payload.player;
+    },
+    playerLeft: (state: GameState, action: PayloadAction<string>) => {
+      const players = state.players;
+      delete players[action.payload];
+      state.players = {...players};
     }
   },
 })

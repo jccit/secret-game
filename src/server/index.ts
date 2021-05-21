@@ -5,13 +5,13 @@ import {
   isWebSocketPingEvent,
   WebSocket,
 } from "https://deno.land/std/ws/mod.ts";
-import type Game from '../shared/types/Game.ts';
 import Role from '../shared/types/Role.ts';
+import Game from './game.ts';
 import GameManager from './gameManager.ts';
 
 const gm = new GameManager();
 
-function handleReduxEvent(sock: WebSocket, rawAction: string) {
+function handleReduxEvent(sock: WebSocket, sockId: string, rawAction: string) {
   const action = JSON.parse(rawAction);
 
   if (action.type === 'join') {
@@ -24,9 +24,12 @@ function handleReduxEvent(sock: WebSocket, rawAction: string) {
     }
 
     if (game) {
+      const gameId = game.getId();
+      gm.joinGame(gameId, sockId, sock, 'test');
+
       sock.send(JSON.stringify({
         type: 'game/joined',
-        payload: game
+        payload: game.getState()
       }));
     } else {
       sock.send(JSON.stringify({
@@ -36,8 +39,12 @@ function handleReduxEvent(sock: WebSocket, rawAction: string) {
   }
 }
 
-async function handleWs(sock: WebSocket) {
-  console.log("socket connected!");
+function leaveGame(sock: WebSocket, sockId: string) {
+  gm.disconnect(sockId);
+}
+
+async function handleWs(sock: WebSocket, id: string) {
+  console.log("socket connected!", id);
 
   try {
     for await (const ev of sock) {
@@ -45,7 +52,7 @@ async function handleWs(sock: WebSocket) {
         // text message
         console.log("ws:Text", ev);
 
-        handleReduxEvent(sock, ev);
+        handleReduxEvent(sock, id, ev);
       } else if (ev instanceof Uint8Array) {
         // binary message
         console.log("ws:Binary", ev);
@@ -57,6 +64,8 @@ async function handleWs(sock: WebSocket) {
         // close
         const { code, reason } = ev;
         console.log("ws:Close", code, reason);
+
+        leaveGame(sock, id);
       }
     }
   } catch (err) {
@@ -74,16 +83,19 @@ if (import.meta.main) {
   console.log(`websocket server is running on :${port}`);
   for await (const req of serve(`:${port}`)) {
     const { conn, r: bufReader, w: bufWriter, headers } = req;
-    acceptWebSocket({
-      conn,
-      bufReader,
-      bufWriter,
-      headers,
-    })
-      .then(handleWs)
-      .catch(async (err) => {
-        console.error(`failed to accept websocket: ${err}`);
-        await req.respond({ status: 400 });
-      });
+    const id = headers.get("sec-websocket-key");
+    if (id) {
+      acceptWebSocket({
+        conn,
+        bufReader,
+        bufWriter,
+        headers,
+      })
+        .then((sock) => handleWs(sock, id))
+        .catch(async (err) => {
+          console.error(`failed to accept websocket: ${err}`);
+          await req.respond({ status: 400 });
+        });
+    }
   }
 }
