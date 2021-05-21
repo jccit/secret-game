@@ -1,7 +1,7 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
-module.exports = {
+export default {
   mount: {
-    public: { url: '/', static: true },
+    public: { url: '/', },
     src: { url: '/build' },
   },
   alias: {
@@ -13,26 +13,12 @@ module.exports = {
     '@snowpack/plugin-webpack',
     '@snowpack/plugin-react-refresh'
   ],
-  routes: [
-    /* Enable an SPA Fallback in development: */
-    // {"match": "routes", "src": ".*", "dest": "/index.html"},
-  ],
   optimize: {
-    /* Example: Bundle your final build: */
     bundle: true,
     minify: true,
     //preload: true,
     splitting: true,
     treeshake: true,
     target: 'es2018',
-  },
-  packageOptions: {
-    /* ... */
-  },
-  devOptions: {
-    /* ... */
-  },
-  buildOptions: {
-    /* ... */
   },
 };
