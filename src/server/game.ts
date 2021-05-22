@@ -19,10 +19,19 @@ export default class Game {
 
   addPlayer(name: string, socket: WebSocket): string {
     const id = v4.generate();
+    const cleanedName = name.replace(/\s+/g,' ').trim();
     const newPlayer: Player = {
-      name,
+      name: cleanedName,
       role: Role.Unknown
     };
+
+    socket.send(JSON.stringify({
+      type: 'player/sync',
+      payload: {
+        ...newPlayer,
+        id
+      }
+    }));
 
     this.playerSockets.forEach((sock: WebSocket) => {
       sock.send(JSON.stringify({

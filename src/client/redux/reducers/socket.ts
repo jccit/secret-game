@@ -14,10 +14,10 @@ export const socketSlice = createSlice({
   name: 'socket',
   initialState,
   reducers: {
-    connect: (state: SocketState, action: PayloadAction<string>) => {
+    connect: (state: SocketState, action: PayloadAction<{ room: string, name: string}>) => {
       // Actual conneciton logic is in the websocket middleware
       state.connection = "connecting";
-      state.room = action.payload;
+      state.room = action.payload.room;
     },
     connected: (state: SocketState) => {
       state.connection = "connected";

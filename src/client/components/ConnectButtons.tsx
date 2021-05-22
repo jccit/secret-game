@@ -9,14 +9,19 @@ const ConnectButtons = () => {
   const socketConnection = useAppSelector((state) => state.socket.connection);
   const dispatch = useAppDispatch();
   const [code, setCode] = useState('');
+  const [name, setName] = useState('');
   const [lastClicked, setLastClicked] = useState(0);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCode(event.target.value);
   };
 
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
   const joinRoom = (room: string) => {
-    dispatch(connect(room));
+    dispatch(connect({ room, name }));
   }
 
   const joinClick = () => {
@@ -29,6 +34,7 @@ const ConnectButtons = () => {
     joinRoom('');
   }
 
+  const nameInvalid = name == "";
   const connecting = socketConnection === 'connecting';
   const joinConnecting = lastClicked === 1 && connecting;
   const createConnecting = lastClicked === 0 && connecting;
@@ -36,15 +42,21 @@ const ConnectButtons = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
-      <LoadingButton loading={createConnecting} variant="outlined" color="primary" size="large" onClick={createRoom} disabled={connecting}>Start new game</LoadingButton>
+      <TextField
+        variant="outlined"
+        label="Username"
+        value={name}
+        onChange={handleNameChange}
+        disabled={connecting}
+      />
 
       <TextField
         variant="outlined"
         label="Join existing game"
         placeholder="Game code"
-        style={{marginTop: 40}}
+        style={{marginTop: 50}}
         value={code}
-        disabled={connecting}
+        disabled={connecting || nameInvalid}
         onChange={handleChange}
         inputProps={{ maxLength: 6 }}
         InputProps={{
@@ -54,7 +66,7 @@ const ConnectButtons = () => {
                 joinConnecting ? <CircularProgress size={24} /> :
                 <IconButton
                   onClick={joinClick}
-                  disabled={connecting || !validCode}
+                  disabled={connecting || !validCode || nameInvalid}
                   edge="end"
                 >
                   <Send />
@@ -64,6 +76,16 @@ const ConnectButtons = () => {
           )
         }}
       />
+
+      <LoadingButton 
+        loading={createConnecting} 
+        variant="outlined"
+        color="primary"
+        size="large"
+        onClick={createRoom}
+        disabled={connecting || nameInvalid}
+        style={{marginTop: 30}}
+      >Start new game</LoadingButton>
     </div>
   );
 };

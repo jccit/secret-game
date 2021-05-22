@@ -17,15 +17,15 @@ function handleReduxEvent(sock: WebSocket, sockId: string, rawAction: string) {
   if (action.type === 'join') {
     let game: Game | null = null;
 
-    if (action.payload != '') {
-      game = gm.get(action.payload);
+    if (action.payload.room != '') {
+      game = gm.get(action.payload.room);
     } else {
       game = gm.newGame();
     }
 
     if (game) {
       const gameId = game.getId();
-      gm.joinGame(gameId, sockId, sock, 'test');
+      gm.joinGame(gameId, sockId, sock, action.payload.name);
 
       sock.send(JSON.stringify({
         type: 'game/joined',

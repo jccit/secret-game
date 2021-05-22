@@ -13,7 +13,16 @@ export const playerSlice = createSlice({
   reducers: {
     setRole: (state: Player, action: PayloadAction<Role>) => {
       state.role = action.payload;
-    }
+    },
+    setName: (state: Player, action: PayloadAction<string>) => {
+      state.name = action.payload;
+    },
+    sync: (state: Player, action: PayloadAction<Player>) => {
+      return {
+        ...state,
+        ...action.payload
+      };
+    },
   },
 })
 

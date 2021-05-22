@@ -3,8 +3,8 @@ import { connected, disconnected } from './reducers/socket'
 const websocketMiddleware = () => {
   let socket: WebSocket | null = null;
 
-  const onOpen = (store, room) => () => {
-    socket?.send(JSON.stringify({ type: 'join', payload: room }));
+  const onOpen = (store, joinPayload) => () => {
+    socket?.send(JSON.stringify({ type: 'join', payload: joinPayload }));
     store.dispatch(connected());
   }
 
@@ -15,7 +15,7 @@ const websocketMiddleware = () => {
   const onMessage = store => (event) => {
     const action = JSON.parse(event.data);
 
-    if (action.type.startsWith('game')) {
+    if (action.type.startsWith('game') || action.type.startsWith('player')) {
       store.dispatch({
         ...action,
         server: true

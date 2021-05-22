@@ -1,12 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import Game from './Game'
+import Router from './Router'
 import { store } from './redux/store'
 
 ReactDOM.render(
   <Provider store={store}>
-    <Game />
+    <Router />
   </Provider>,
   document.getElementById('app')
 );
