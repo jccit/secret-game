@@ -13,7 +13,7 @@ const ConnectButtons = () => {
   const [lastClicked, setLastClicked] = useState(0);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCode(event.target.value);
+    setCode(event.target.value.toUpperCase());
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {

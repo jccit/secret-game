@@ -8,9 +8,9 @@ export default class Game {
   private state: GameState;
   private playerSockets: Map<string, WebSocket>;
 
-  constructor() {
+  constructor(id: string) {
     this.state = {
-      id: '123456',
+      id,
       players: {}
     };
 

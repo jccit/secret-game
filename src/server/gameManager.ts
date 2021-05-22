@@ -22,8 +22,9 @@ export default class GameManager {
   }
 
   newGame(): Game {
-    const game = new Game();
-    this.games.set(game.getId(), game);
+    const id = Math.random().toString(36).substr(2, 6).toUpperCase();
+    const game = new Game(id);
+    this.games.set(id, game);
     return game;
   }
 
