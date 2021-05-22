@@ -21,8 +21,17 @@ export default class GameManager {
     return null;
   }
 
+  static generateID(): string {
+    return Math.random().toString(36).substr(2, 6).toUpperCase();
+  }
+
   newGame(): Game {
-    const id = Math.random().toString(36).substr(2, 6).toUpperCase();
+    let id = GameManager.generateID();
+    
+    while (this.games.has(id)) {
+      id = GameManager.generateID();
+    }
+
     const game = new Game(id);
     this.games.set(id, game);
     return game;
