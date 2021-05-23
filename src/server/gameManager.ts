@@ -21,6 +21,23 @@ export default class GameManager {
     return null;
   }
 
+  getForSocket(socketId: string): Game | null {
+    const id = this.players.get(socketId)?.game;
+
+    if (id && this.games.has(id)) {
+      const game = this.games.get(id);
+      if (game) {
+        return game;
+      }
+    }
+
+    return null;
+  }
+
+  getPlayerID(socketId: string): string | undefined {
+    return this.players.get(socketId)?.player;
+  }
+
   static generateID(): string {
     return Math.random().toString(36).substr(2, 6).toUpperCase();
   }

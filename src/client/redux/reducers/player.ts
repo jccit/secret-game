@@ -4,7 +4,8 @@ import type Player from 'shared/types/Player';
 
 const initialState: Player = {
   role: Role.Unknown,
-  name: 'unknown'
+  name: 'unknown',
+  value: false
 }
 
 export const playerSlice = createSlice({
@@ -23,10 +24,14 @@ export const playerSlice = createSlice({
         ...action.payload
       };
     },
+    vote: (state: Player, action: PayloadAction<boolean>) => {
+      state.voted = true;
+      state.voteResult = action.payload;
+    }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setRole } = playerSlice.actions
+export const { setRole, vote } = playerSlice.actions
 
 export default playerSlice.reducer

@@ -1,11 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type GameState from 'shared/types/GameState';
-import type Player from 'src/shared/types/Player';
+import GameState, { Phase } from 'shared/types/GameState';
+import type Player from 'shared/types/Player';
 
 const initialState: GameState = {
   id: '',
   players: [],
-  joinState: "inactive"
+  joinState: "inactive",
+  phase: Phase.Waiting,
+  chancellor: '',
+  president: '',
 }
 
 export const gameSlice = createSlice({
@@ -29,6 +32,12 @@ export const gameSlice = createSlice({
       const players = state.players;
       delete players[action.payload];
       state.players = {...players};
+    },
+    sync: (state: GameState, action: PayloadAction<GameState>) => {
+      return {
+        ...state,
+        ...action.payload
+      };
     }
   },
 })

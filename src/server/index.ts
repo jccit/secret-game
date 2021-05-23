@@ -36,6 +36,13 @@ function handleReduxEvent(sock: WebSocket, sockId: string, rawAction: string) {
         type: 'game/joiningFail',
       }));
     }
+  } else {
+    const game = gm.getForSocket(sockId);
+    const player = gm.getPlayerID(sockId);
+
+    if (game && player) {
+      game.processEvent(action, player);
+    }
   }
 }
 

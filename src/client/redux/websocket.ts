@@ -36,7 +36,7 @@ const websocketMiddleware = () => {
         
         return next(action);
       default:
-        if (socket !== null && !action.server && action.type.startsWith('game'))
+        if (socket !== null && !action.server && (action.type.startsWith('game') || action.type.startsWith('player')))
           socket.send(JSON.stringify(action));
         
         return next(action);
