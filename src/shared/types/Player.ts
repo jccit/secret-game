@@ -1,12 +1,37 @@
-import type Role from './Role.ts';
+import { Ctx } from 'boardgame.io';
+import Card from './Card';
+import GameState from './GameState';
+import Role from './Role';
 
-export default interface Player {
-  id?: string;
-  name: string;
+export interface PlayerState {
+  id: string;
   role: Role;
-  ready: boolean;
+  disabled: boolean;
   voted: boolean;
   voteResult?: boolean;
+  cards: Card[];
 }
 
-export type PlayerList = { [id: string]: Player };
+export const setupPlayer = (id: string): PlayerState => ({
+  id,
+  role: Role.Unknown,
+  disabled: false,
+  voted: false,
+  cards: []
+});
+
+export const filterPlayerData = (G: GameState, ctx: Ctx, playerID: string): GameState => {
+  const players = Object.keys(G.players).map((id: string) => {
+    const player = G.players[id];
+    if (player.id === playerID) return player;
+
+    return {
+      ...player,
+      cards: []
+    };
+  });
+
+  return {
+    ...G
+  };
+};

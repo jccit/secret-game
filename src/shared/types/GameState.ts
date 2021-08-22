@@ -1,5 +1,4 @@
-import type { PlayerList } from './Player.ts';
-import type Player from './Player.ts'
+import { PlayerState } from './Player';
 
 export enum Phase {
   Waiting,
@@ -13,11 +12,7 @@ export enum Phase {
 }
 
 export default interface GameState {
-  id: string;
-  players: PlayerList;
-  joinState?: "inactive" | "joined" | "failed";
-  phase: Phase;
-
+  players: Record<string, PlayerState>;
   president: string;
   chancellor: string;
 }

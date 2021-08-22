@@ -1,18 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Provider } from 'react-redux'
-import Router from './Router'
-import { store } from './redux/store'
+import { Client } from 'boardgame.io/react';
+import { Local } from 'boardgame.io/multiplayer';
+// import { SocketIO } from 'boardgame.io/multiplayer';
+import GameUI from './GameUI';
+import { SecretGame } from '../shared/Game';
+
+const App = Client({
+  game: SecretGame,
+  board: GameUI,
+  multiplayer: Local(),
+  numPlayers: 10
+});
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router />
-  </Provider>,
+  <>
+    <App playerID="0" />
+    <App playerID="1" />
+  </>,
   document.getElementById('app')
 );
-
-// Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
-// Learn more: https://www.snowpack.dev/concepts/hot-module-replacement
-if (import.meta.hot) {
-  import.meta.hot.accept();
-}
