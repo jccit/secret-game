@@ -2,6 +2,16 @@ import { PhaseConfig, Ctx } from "boardgame.io";
 import { INVALID_MOVE } from "boardgame.io/core";
 import GameState from "../types/GameState";
 
+export const readyCheck = (G: GameState, ctx: Ctx): boolean => {
+  let validPlayers = 1;
+  for (const player in G.players) {
+    if (ctx.activePlayers[player] === 'ready')
+      validPlayers++;
+  }
+
+  return validPlayers >= 5;
+}
+
 export const lobby: PhaseConfig = {
   start: true,
   turn: {
@@ -19,13 +29,7 @@ export const lobby: PhaseConfig = {
         moves: {
           startGame: (G: GameState, ctx: Ctx) => {
             // Validate we have the correct number of players
-            let validPlayers = 1;
-            for (const player in G.players) {
-              if (ctx.activePlayers[player] === 'ready')
-                validPlayers++;
-            }
-
-            if (validPlayers < 5) {
+            if (!readyCheck(G, ctx)) {
               return INVALID_MOVE;
             }
             

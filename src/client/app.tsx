@@ -17,6 +17,9 @@ ReactDOM.render(
   <>
     <App playerID="0" />
     <App playerID="1" />
+    <App playerID="2" />
+    <App playerID="3" />
+    <App playerID="4" />
   </>,
   document.getElementById('app')
 );
