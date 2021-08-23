@@ -2,6 +2,7 @@ import { Ctx } from 'boardgame.io';
 import Card from './Card';
 import GameState from './GameState';
 import Role from './Role';
+import { Vote } from './Vote';
 
 export interface PlayerState {
   id: string;
@@ -21,17 +22,38 @@ export const setupPlayer = (id: string): PlayerState => ({
 });
 
 export const filterPlayerData = (G: GameState, ctx: Ctx, playerID: string): GameState => {
-  const players = Object.keys(G.players).map((id: string) => {
-    const player = G.players[id];
-    if (player.id === playerID) return player;
+  let players: Record<string, PlayerState> = {};
+  const currentPlayer = G.players[playerID];
+  for (const pid in G.players) {
+    if (Object.prototype.hasOwnProperty.call(G.players, pid)) {
+      const player = G.players[pid];
+      if (player.id === currentPlayer.id) {
+        players[pid] = player;
+      } else {
+        const showRole = currentPlayer.role >= Role.Evil;
 
-    return {
-      ...player,
-      cards: []
-    };
-  });
+        players[pid] = {
+          ...player,
+          role: showRole ? player.role : Role.Unknown,
+          cards: []
+        }
+      }
+      
+    }
+  }
+
+  let votes: Record<string, Vote> = {};
+  for (const playerVoteID in G.votes) {
+    if (!G.showVotes && playerID !== playerVoteID) {
+      votes[playerVoteID] = Vote.Unknown;
+    } else {
+      votes[playerVoteID] = G.votes[playerVoteID];
+    }
+  }
 
   return {
-    ...G
+    ...G,
+    players,
+    votes
   };
 };

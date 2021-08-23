@@ -1,4 +1,5 @@
 import { PlayerState } from './Player';
+import { Vote } from './Vote';
 
 export enum Phase {
   Waiting,
@@ -13,6 +14,10 @@ export enum Phase {
 
 export default interface GameState {
   players: Record<string, PlayerState>;
+  turnOrder: string[];
   president: string;
   chancellor: string;
+  chancellorCandidate: string;
+  votes: Record<string, Vote>;
+  showVotes: boolean;
 }
