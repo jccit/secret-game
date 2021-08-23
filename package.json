@@ -5,8 +5,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "webpack-dev-server",
-    "build": "webpack",
-    "build:server": "webpack -c webpack.config.server.js",
+    "build": "yarn build:client && yarn build:server",
+    "build:client": "NODE_ENV=production webpack",
+    "build:server": "NODE_ENV=production webpack -c webpack.config.server.js",
     "server": "node build/server/server.js"
   },
   "dependencies": {
