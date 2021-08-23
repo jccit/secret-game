@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BoardProps } from 'boardgame.io/dist/types/packages/react';
 import GameState from '../shared/types/GameState';
-import Lobby from './components/Lobby';
-import Board from './components/Board';
+
+const Lobby = React.lazy(() => import(/* webpackChunkName: "lobby" */'./components/Lobby'));
+const Board = React.lazy(() => import(/* webpackChunkName: "board" */'./components/Board'));
 
 export const GameUI = (props: BoardProps<GameState>) => {
   let PhaseComponent: any = 'div';
@@ -20,7 +21,9 @@ export const GameUI = (props: BoardProps<GameState>) => {
   return (
     <>
       <h1>Game</h1>
-      <PhaseComponent {...props} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <PhaseComponent {...props} />
+      </Suspense>
     </>
   );
 };
